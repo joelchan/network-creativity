@@ -31,13 +31,27 @@ def idea_prototypicality(ideas_cdf, baseline_avg_cdf):
     """
     ideas_p = []
     for idea in ideas_cdf.iterrows():
+        # estimate difference between idea cdf and baseline prototypical cdf
         ks = kstest(idea['cdf'], baseline_avg_cdf)[0]; # kstest returns tuple of KS statistic and p value
-        ideas_p.append({'id': idea['id'], ''})
-    return 
+        ideas_p.append({'id': idea['id'], 'prototypicality': ks})
+    # convert to dataframe
+    ideas_p = pd.DataFrame(ideas_p)
+    return ideas_p
+    
+if __name__ == "main":
 
-def main():
-    return None
+    """
+    TODO now for Varun
+    """
+    # use pandas to import csv file
 
+    # convert to bow representation (using nlp.ideas_to_bow())
+
+    # export to csv
+
+    """
+    For later
+    """
     # create the baseline cdf
         # call networks.ideas_to_network()
         # call ideas_to_cdf()
