@@ -12,10 +12,11 @@ def cdf_an_idea(idea_nw):
     # draw from statsmodels ECDF
     return None
 
-def ideas_to_cdf(idea_network):
+def ideas_to_cdf(idea_bow, idea_network):
     """Expect result of nlp.ideas_to_network(), i.e., a set of ideas represented as edge weights
     Return a set of cdfs for each idea
     """
+
 
 def average_distribution(ideas_cdf):
     """Given a set of cdfs, compute an average cdf.
