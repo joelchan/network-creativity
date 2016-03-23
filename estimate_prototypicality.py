@@ -1,3 +1,4 @@
+from __future__ import division
 import pandas as pd
 import numpy as np
 import scipy as sp
@@ -47,7 +48,12 @@ if __name__ == "__main__":
     print "running"
     csv_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
     bow_ideas, stem_frequencies = nlp.ideas_to_bow(csv_ideas)
-    stem_network = networks.ideas_to_network(bow_ideas, stem_frequencies.keys())
+    stem_freq_keys = stem_frequencies.keys()
+    # reduced_stem_frequencies = {}
+    # for i in range(25): 
+    #	reduced_stem_frequencies[stem_freq_keys[i]] = stem_frequencies[stem_freq_keys[i]]
+    # stem_network = networks.ideas_to_stem_network(bow_ideas, reduced_stem_frequencies.keys())
+    stem_network = networks.ideas_to_stem_network(bow_ideas, stem_frequencies.keys())
     # bow_ideas.to_csv("data/bow_csv.csv")
     # use pandas to import csv file
 
