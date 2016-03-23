@@ -45,8 +45,9 @@ if __name__ == "__main__":
     """
     print "running"
     csv_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
-    bow_ideas = nlp.ideas_to_bow(csv_ideas)
-    bow_ideas.to_csv("data/bow_csv.csv")
+    bow_ideas, stem_frequencies = nlp.ideas_to_bow(csv_ideas)
+    stem_network = networks.ideas_to_network(bow_ideas, stem_frequencies.keys())
+    # bow_ideas.to_csv("data/bow_csv.csv")
     # use pandas to import csv file
 
     # convert to bow representation (using nlp.ideas_to_bow())

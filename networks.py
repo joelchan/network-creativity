@@ -1,18 +1,22 @@
 from sklearn.metrics import jaccard_similarity_score
 import itertools as it
 
-def ideas_to_network(ideas_bow, nodes):
+def ideas_to_stem_network(ideas_bow, stems):
     """Given a set of ideas in bag of words (stems) form and a vocabulary set of stem nodes, 
     compute edge weights between all possible stem pairs
     where edge weights are given by the Jaccard index
     Store as numpy matrix?
+
+    ideas_bow (pandas DataFrame) - set of ideas in stem format (with ids)
+    stems (list) - set of all stems used in the idea corpus
+
     """
 
     edge_weights = [] # to store the edge weights
     edges = [] # for keeping track of edges we've seen
 
     # for all possible pairs of nodes
-    for A, B in it.combinations(nodes, 2):
+    for A, B in it.combinations(stems, 2):
         # if we haven't seen the pair already
         if not [A, B] in edges and not [B, A] in edges:
             # check the jaccard sim and add to edge weights if it's nonzero
