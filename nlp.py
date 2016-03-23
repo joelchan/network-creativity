@@ -38,7 +38,7 @@ def ideas_to_bow(raw_ideas):
         # split into sentences (PunktSentenceTokenizer)
         sentences = nltk.sent_tokenize(text)
 
-        # tokenize and stem the words wiht porter stemmer
+        # tokenize and stem the words with porter stemmer
         stemmer = PorterStemmer()
         stems = set() # NOTE: this is different from usual BOW because we only want the unique stems in the idea
         frequency = {}
@@ -48,9 +48,9 @@ def ideas_to_bow(raw_ideas):
                 stem = stemmer(token)
                 frequency[stem] += 1
                 stems.add(stem)
-
-        # apply frequency filter (in Toubia, f >= 5 for ideas, and f >= 10 for Google results)
-        stems = [stem for stem in stems if frequency[stem] > THRESHOLD]
         idea_stems.append({'id': idea['id'], 'stems': stems})
+        # apply frequency filter (in Toubia, f >= 5 for ideas, and f >= 10 for Google results)
+    # stems = [stem for stem in stems if frequency[stem] > THRESHOLD]
+        
 
     return pd.DataFrame(idea_stems)

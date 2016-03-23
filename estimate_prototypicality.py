@@ -38,11 +38,15 @@ def idea_prototypicality(ideas_cdf, baseline_avg_cdf):
     ideas_p = pd.DataFrame(ideas_p)
     return ideas_p
     
-if __name__ == "main":
+if __name__ == "__main__":
 
     """
     TODO now for Varun
     """
+    print "running"
+    csv_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
+    bow_ideas = nlp.ideas_to_bow(csv_ideas)
+    bow_ideas.to_csv("data/bow_csv.csv")
     # use pandas to import csv file
 
     # convert to bow representation (using nlp.ideas_to_bow())
@@ -52,10 +56,19 @@ if __name__ == "main":
     """
     For later
     """
+    #(idea_id, idea_content, prototypicality_score) = idea_prototypicality(ideas_cdf)
+    #network = networks.ideas_to_network(idea_content)
+    #new_ideas_cdf = ideas_to_cdf(idea_content)
+ 	#avg_dist = average_distribution(new_ideas_cdf)
+
     # create the baseline cdf
         # call networks.ideas_to_network()
         # call ideas_to_cdf()
         # call average_distribution()
+
+
+
+    #return(prototypicality_score, avg_dist)
 
     # compute the idea cdfs
         # call networks.ideas_to_network()
