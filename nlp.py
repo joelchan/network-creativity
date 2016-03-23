@@ -1,6 +1,8 @@
 import nltk
 from nltk.stem.porter import PorterStemmer
 import numpy as np
+import pandas as pd
+import re
 
 THRESHOLD = 10 # frequency threshold for stems
 
@@ -29,8 +31,10 @@ def ideas_to_bow(raw_ideas):
     Assume it's in a pandas df with columns [id, content]
     """
 
+    stopwords = get_stopwords()
+
     idea_stems = []
-    for idea in raw_ideas:
+    for index, idea in raw_ideas.iterrows():
 
         # read the text
         text = idea['content'].encode('utf-8', 'ignore')
@@ -45,10 +49,14 @@ def ideas_to_bow(raw_ideas):
         for sentence in sentences:
             tokens = [token.lower() for token in nltk.word_tokenize(sentence) if token not in stopwords]  # tokenize
             for token in tokens:
-                stem = stemmer(token)
-                frequency[stem] += 1
-                stems.add(stem)
-        idea_stems.append({'id': idea['id'], 'stems': stems})
+                stem = stemmer.stem(token)
+                if re.match('^[a-zA-Z0-9]+$', stem):
+                    if stem in frequency:
+                        frequency[stem] += 1
+                    else:
+                        frequency[stem] = 1
+                    stems.add(stem)
+        idea_stems.append({'id': idea['id'], 'content': idea['content'], 'stems': stems})
         # apply frequency filter (in Toubia, f >= 5 for ideas, and f >= 10 for Google results)
     # stems = [stem for stem in stems if frequency[stem] > THRESHOLD]
         
