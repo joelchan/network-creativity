@@ -3,36 +3,52 @@ from sklearn.metrics import jaccard_similarity_score
 import itertools as it
 import pandas as pd
 
-def ideas_to_stem_network(ideas_bow, stems):
+def ideas_to_stem_network(stems, ideas_bow):
     """Given a set of ideas in bag of words (stems) form and a vocabulary set of stem nodes, 
     compute edge weights between all possible stem pairs
     where edge weights are given by the Jaccard index
     Store as numpy matrix?
 
-    ideas_bow (pandas DataFrame) - set of ideas in stem format (with ids)
     stems (list) - set of all stems used in the idea corpus
+    ideas_bow (pandas DataFrame) - set of ideas in stem format (with ids)
 
     """
 
-    edge_weights = [] # to store the edge weights
-    edges = [] # for keeping track of edges we've seen
+    edge_weights = {} # to store the edge weights
 
+    # first compute idea set for each stem
     stem_sets = {}
     for s in stems:
         stem_sets[s] = in_ideas(s, ideas_bow)
 
-    # for all possible pairs of nodes
+    # compute network for all possible stem pairs
     for A, B in it.combinations(stems, 2):
-        # if we haven't seen the pair already
-        if not [A, B] in edges and not [B, A] in edges:
-            # check the jaccard sim and add to edge weights if it's nonzero
+        # create canonical (sorted) pair name
+        pair = "-".join(sorted([A, B]))
+        # if this not an identity match, and we haven't seen the pair already
+        if A != B and pair not in edge_weights:
+            # check the jaccard sim and add to edge weights
             weight = compute_edge(A, B, stem_sets)
-            print (A, B, weight)
-            if weight > 0:
-                edge_weights.append({'pair': [A, B], 'pair_r': [B, A], 'weight': weight})
+            # print (A, B, weight)
+            # if weight > 0:
+            edge_weights[pair] = weight
                 
         # print len(edge_weights)
-    return pd.DataFrame(edge_weights);
+    return edge_weights
+
+def ideas_to_edge_weights(ideas_bow, edge_weights):
+    """Given a set of ideas and the list of edge weights,
+    Return a re-representation of each idea as a list of edge weights
+    """
+
+    ideas_bow['edge_weights'] = ""
+    for index, idea in ideas_bow.iterrows():
+        this_edge_weights = []
+        for A, B in it.combinations(idea['stems'], 2):
+            pair = "-".join(sorted([A, B]))
+            this_edge_weights.append(edge_weights[pair])
+        ideas_bow.set_value(index, 'edge_weights', this_edge_weights)
+    return ideas_bow
 
 def in_ideas(node, ideas_bow):
     """Find set of ideas that contain the node
@@ -51,6 +67,6 @@ def compute_edge(A, B, stem_sets):
     SA = stem_sets[A]
     # Find SB - set of ideas that contain B
     SB = stem_sets[B]
-    return len(SA.intersection(SB)) / (len(SA.union(SB)))
+    
     # jaccard is ratio of intersection(SA, SB) to union(SA, SB)
-    # return jaccard_similarity_score(SA, SB)
+    return len(SA.intersection(SB)) / (len(SA.union(SB)))
