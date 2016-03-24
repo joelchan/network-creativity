@@ -7,53 +7,44 @@ import nlp
 import networks
 import prototypicality as pr
 from statsmodels.distributions.empirical_distribution import ECDF
-
-def cdf_an_idea(idea_nw):
-    """Given an idea represented as edge weights, return its empirical cdf
-    """
-    # draw from statsmodels ECDF
-    return None
-
-def ideas_to_cdf(idea_bow, idea_network):
-    """Expect result of nlp.ideas_to_network(), i.e., a set of ideas represented as edge weights
-    Return a set of cdfs for each idea
-    """
-
-
-def average_distribution(ideas_cdf):
-    """Given a set of cdfs, compute an average cdf.
-    This is for creating the baseline "prototypical" distribution.
-    Per toubia, average at each edge weight value across all ideas.
-    """
-    return None
-
-
+import json
     
 if __name__ == "__main__":
 
     # import data and convert to bow representation
+    print "Importing data..."
     csv_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
     bow_ideas, stem_frequencies = nlp.ideas_to_bow(csv_ideas)
+    bow_ideas.to_csv("stems_fabric_display_120_rand.csv")
 
     # compute the baseline network
+    print "Computing edge weights..."
     stem_network = networks.ideas_to_stem_network(stem_frequencies.keys(), bow_ideas)
+    f = open("stem_network.json", 'w')
+    f.write(json.dumps(stem_network, indent=2))
+    f.close()
 
     # convert ideas to edge weights
+    print "Converting ideas to edge weights"
     edge_ideas = networks.ideas_to_edge_weights(bow_ideas, stem_network)
 
     # compute baseline cdfs
+    print "Computing baseline prototypical cdf..."
     baseline_cdf, cdf_ideas = pr.compute_prototypical_distribution(edge_ideas)
     # print stem_network
     # print baseline_cdf
     # cdf_ideas.to_csv("cdfs_fabric_display_5_rand.csv")
 
     # re-represent test ideas as stem network edge weights
-    test_ideas = pd.read_csv("data/fabric_display_5_rand.csv")
+    print "Processing test ideas..."
+    test_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
     test_ideas, stem_frequencies = nlp.ideas_to_bow(test_ideas)
     test_ideas = networks.ideas_to_edge_weights(test_ideas, stem_network)
 
-    # compute prototypicality score for 
-    pr_ideas = idea_prototypicality(test_ideas, baseline_cdf)
+    # compute prototypicality score
+    print "Computing prototypicality scores..."
+    pr_ideas = pr.idea_prototypicality(test_ideas, baseline_cdf)
+    pr_ideas.to_csv("pr_120.csv")
     # print pr_ideas
 
     # compute the idea cdfs

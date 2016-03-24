@@ -43,11 +43,14 @@ def ideas_to_edge_weights(ideas_bow, edge_weights):
 
     ideas_bow['edge_weights'] = ""
     for index, idea in ideas_bow.iterrows():
-        this_edge_weights = []
-        for A, B in it.combinations(idea['stems'], 2):
-            pair = "-".join(sorted([A, B]))
-            this_edge_weights.append(edge_weights[pair])
-        ideas_bow.set_value(index, 'edge_weights', this_edge_weights)
+        if len(idea['stems']) > 1: # sometimes ideas end up only having one stem, which makes combinatinos undefined
+            this_edge_weights = []
+            for A, B in it.combinations(idea['stems'], 2):
+                pair = "-".join(sorted([A, B]))
+                this_edge_weights.append(edge_weights[pair])
+            ideas_bow.set_value(index, 'edge_weights', this_edge_weights)
+        else:
+            ideas_bow.set_value(index, 'edge_weights', [])
     return ideas_bow
 
 def in_ideas(node, ideas_bow):

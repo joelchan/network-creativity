@@ -8,7 +8,7 @@ BUCKETS = np.linspace(0, 1, 10)
 
 def compute_prototypical_distribution(idea_edge_weights):
     """Given a set of ideas (each represented as a list of edge_weights [output of ideas_to_edge_weights])
-    return a prototypical distribution
+    return a prototypical distribution. Per toubia, average at each edge weight value across all ideas.
     """
     
     # initialize container for computing average cdf for each x
@@ -19,13 +19,15 @@ def compute_prototypical_distribution(idea_edge_weights):
     # compute ecdf for each idea
     idea_edge_weights['cdf'] = ""
     for index, idea in idea_edge_weights.iterrows():
-        # create the ecdf for the idea
-        ecdf = ECDF(idea['edge_weights'])
-        this_cdf = []
-        for b in BUCKETS:
-            this_cdf.append(ecdf(b))
-            all_cdfs[b] += [ecdf(b)]
-        idea_edge_weights.set_value(index, 'cdf', this_cdf)
+        # print idea['edge_weights']
+        if len(idea['edge_weights']) > 0:
+            # create the ecdf for the idea
+            ecdf = ECDF(idea['edge_weights'])
+            this_cdf = []
+            for b in BUCKETS:
+                this_cdf.append(ecdf(b))
+                all_cdfs[b] += [ecdf(b)]
+            idea_edge_weights.set_value(index, 'cdf', this_cdf)
 
     # compute the prototypical distribution by averaging across cdfs for each bucket
     proto_cdf = []
@@ -44,10 +46,11 @@ def idea_prototypicality(idea_edges, baseline_avg_cdf):
     idea_edges['cdf'] = ""
     for index, idea in idea_edges.iterrows():
         # compute the cdf
-        ecdf = ECDF(idea['edge_weights'])
-        this_cdf = [ecdf(b) for b in BUCKETS]
-        # estimate difference between idea cdf and baseline prototypical cdf
-        ks = stats.ks_2samp(this_cdf, baseline_avg_cdf)[0]; # returns tuple of KS statistic (D) and p value
-        idea_edges.set_value(index, 'cdf', this_cdf)
-        idea_edges.set_value(index, 'prototypicality', ks)
+        if len(idea['edge_weights']) > 0:
+            ecdf = ECDF(idea['edge_weights'])
+            this_cdf = [ecdf(b) for b in BUCKETS]
+            # estimate difference between idea cdf and baseline prototypical cdf
+            ks = stats.ks_2samp(this_cdf, baseline_avg_cdf)[0]; # returns tuple of KS statistic (D) and p value
+            idea_edges.set_value(index, 'cdf', this_cdf)
+            idea_edges.set_value(index, 'prototypicality', ks)
     return idea_edges
