@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import re
 
-THRESHOLD = 10 # frequency threshold for stems
+THRESHOLD = 5 # frequency threshold for stems
 
 def read_data(filename):
     """
@@ -59,7 +59,12 @@ def ideas_to_bow(raw_ideas):
                         frequency[stem] = 1
                     stems.add(stem)
         idea_stems.append({'id': idea['id'], 'content': idea['content'], 'stems': stems})
-        # apply frequency filter (in Toubia, f >= 5 for ideas, and f >= 10 for Google results)
+    
+    idea_stems = pd.DataFrame(idea_stems)
+    # apply frequency filter (in Toubia, f >= 5 for ideas, and f >= 10 for Google results)
+    for index, idea in idea_stems.iterrows():
+        freq_trimmed = [stem for stem in idea['stems'] if frequency[stem] >= THRESHOLD]
+        idea_stems.set_value(index, 'stems', freq_trimmed)
     # stems = [stem for stem in stems if frequency[stem] > THRESHOLD]
 
     return pd.DataFrame(idea_stems), frequency

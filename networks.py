@@ -19,10 +19,12 @@ def ideas_to_stem_network(stems, ideas_bow):
     # first compute idea set for each stem
     stem_sets = {}
     for s in stems:
-        stem_sets[s] = in_ideas(s, ideas_bow)
+        freq = in_ideas(s, ideas_bow)
+        if freq > 0:
+            stem_sets[s] = freq
 
     # compute network for all possible stem pairs
-    for A, B in it.combinations(stems, 2):
+    for A, B in it.combinations(stem_sets.keys(), 2):
         # create canonical (sorted) pair name
         pair = "-".join(sorted([A, B]))
         # if this not an identity match, and we haven't seen the pair already

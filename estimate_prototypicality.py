@@ -15,7 +15,7 @@ if __name__ == "__main__":
     print "Importing data..."
     csv_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
     bow_ideas, stem_frequencies = nlp.ideas_to_bow(csv_ideas)
-    bow_ideas.to_csv("stems_fabric_display_120_rand.csv")
+    bow_ideas.to_csv("stems_fabric_display_120_rand_trimmed.csv")
 
     # compute the baseline network
     print "Computing edge weights..."
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # compute prototypicality score
     print "Computing prototypicality scores..."
     pr_ideas = pr.idea_prototypicality(test_ideas, baseline_cdf)
-    pr_ideas.to_csv("pr_120.csv")
+    pr_ideas.to_csv("pr_120_trimmed.csv")
     # print pr_ideas
 
     # compute the idea cdfs
