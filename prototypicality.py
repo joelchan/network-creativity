@@ -3,16 +3,17 @@ from statsmodels.distributions.empirical_distribution import ECDF
 import numpy as np
 import scipy.stats as stats
 
-# define the x "bins" we will use for all the distributions
-BUCKETS = np.linspace(0, 1, 10)
+# define the x "bins" we will use for all the distributions, will be defined in function in experiment instead of as a global
+# BUCKETS = np.linspace(0, 1, 10)
 
-def compute_prototypical_distribution(idea_edge_weights):
+def compute_prototypical_distribution(idea_edge_weights, BUCKETS):
     """Given a set of ideas (each represented as a list of edge_weights [output of ideas_to_edge_weights])
     return a prototypical distribution. Per toubia, average at each edge weight value across all ideas.
     """
     
     # initialize container for computing average cdf for each x
     all_cdfs = {}
+    # BUCKETS = np.linspace(0, 1, num_bins)
     for b in BUCKETS:
         all_cdfs[b] = []
 
@@ -36,7 +37,7 @@ def compute_prototypical_distribution(idea_edge_weights):
     
     return proto_cdf, idea_edge_weights
 
-def idea_prototypicality(idea_edges, baseline_avg_cdf):
+def idea_prototypicality(idea_edges, baseline_avg_cdf, BUCKETS):
     """Given a set of edge weights (of ideas), compute a prototypicality score for each idea
     where prototypicality is defined as the Kolmogorov-Smirnov distance of the idea cdf from the average baseline cdf
     return a pandas data frame that has each idea id, idea content, and prototypicality score

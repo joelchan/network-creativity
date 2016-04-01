@@ -13,20 +13,25 @@ def ideas_to_stem_network(stems, ideas_bow):
     ideas_bow (pandas DataFrame) - set of ideas in stem format (with ids)
 
     """
-
+    if 'cloth' in stems:
+        print 'cloth'
+    if 'logo' in stems:
+        print 'logo'
     edge_weights = {} # to store the edge weights
 
     # first compute idea set for each stem
     stem_sets = {}
     for s in stems:
         freq = in_ideas(s, ideas_bow)
-        if freq > 0:
-            stem_sets[s] = freq
+        #if freq > 0:
+        stem_sets[s] = freq
 
     # compute network for all possible stem pairs
     for A, B in it.combinations(stem_sets.keys(), 2):
         # create canonical (sorted) pair name
         pair = "-".join(sorted([A, B]))
+        if pair == 'cloth-logo':
+            print pair
         # if this not an identity match, and we haven't seen the pair already
         if A != B and pair not in edge_weights:
             # check the jaccard sim and add to edge weights
@@ -42,25 +47,27 @@ def ideas_to_edge_weights(ideas_bow, edge_weights):
     """Given a set of ideas and the list of edge weights,
     Return a re-representation of each idea as a list of edge weights
     """
-
+    # print edge_weights
     ideas_bow['edge_weights'] = ""
     for index, idea in ideas_bow.iterrows():
         if len(idea['stems']) > 1: # sometimes ideas end up only having one stem, which makes combinatinos undefined
             this_edge_weights = []
             for A, B in it.combinations(idea['stems'], 2):
                 pair = "-".join(sorted([A, B]))
+                if pair == 'cloth-logo':
+                    print pair
                 this_edge_weights.append(edge_weights[pair])
             ideas_bow.set_value(index, 'edge_weights', this_edge_weights)
         else:
             ideas_bow.set_value(index, 'edge_weights', [])
     return ideas_bow
 
-def in_ideas(node, ideas_bow):
-    """Find set of ideas that contain the node
+def in_ideas(stem, ideas_bow):
+    """Find set of ideas that contain the stem
     """
     containers = set()
     for index, row in ideas_bow.iterrows():
-        if node in row['stems']:
+        if stem in row['stems']:
             containers.add(row['id'])
     return containers
 

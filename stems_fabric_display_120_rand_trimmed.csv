@@ -14,7 +14,7 @@
 12,it can be used to do skype sessions so someone can feel and touch objects,2177,"[u'use', u'touch']"
 13,It can be used by doctors in order to show patients and family members certain things,2187,"[u'use', u'show', u'it']"
 14,use them on a float for a parade to show whatever theme you are trying to represent during the event,251,"[u'use', u'show']"
-15,"hot air balloon shows,",1499,[]
+15,"hot air balloon shows,",1499,[u'show']
 16,Use during fashion shows to highlight clothing on the models.,1652,"[u'use', u'show', u'cloth']"
 17,back drops for theater productions. This makes scenery easy to change from scene to scene,2124,"[u'make', u'chang']"
 18,You can use it to display videos while taking shower or brushing your teeth.,654,"[u'use', u'you', u'display']"

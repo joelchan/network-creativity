@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import re
 
-THRESHOLD = 5 # frequency threshold for stems
+# THRESHOLD = 5 # frequency threshold for stems is variable in experiments, so we aren't keeping it as a global variable, 
+# instead it's a varible passed into ideas_to_bow
 
 def read_data(filename):
     """
@@ -26,14 +27,15 @@ def get_stopwords():
     """
     return read_data("englishstopwords-jc.txt")
 
-def ideas_to_bow(raw_ideas):
+def ideas_to_bow(raw_ideas, THRESHOLD):
     """Given text of ideas, convert to bag of words ("stems") representation
     Assume it's in a pandas df with columns [id, content]
     """
 
     stopwords = get_stopwords()
 
-    idea_stems = []
+    # idea_stems = []
+    raw_ideas['stems'] = ""
     frequency = {}
 
     for index, idea in raw_ideas.iterrows():
@@ -58,13 +60,17 @@ def ideas_to_bow(raw_ideas):
                     else:
                         frequency[stem] = 1
                     stems.add(stem)
-        idea_stems.append({'id': idea['id'], 'content': idea['content'], 'stems': stems})
+        raw_ideas.set_value(index, 'stems', stems)
+        # idea_stems.append({'id': idea['id'], 'content': idea['content'], 'stems': stems, 'creativity': idea['creativity']})
     
-    idea_stems = pd.DataFrame(idea_stems)
+    # idea_stems = pd.DataFrame(idea_stems)
     # apply frequency filter (in Toubia, f >= 5 for ideas, and f >= 10 for Google results)
-    for index, idea in idea_stems.iterrows():
+    all_frequency_trimmed = {}
+    for index, idea in raw_ideas.iterrows():
         freq_trimmed = [stem for stem in idea['stems'] if frequency[stem] >= THRESHOLD]
-        idea_stems.set_value(index, 'stems', freq_trimmed)
+        for word in freq_trimmed:
+            all_frequency_trimmed[word] = frequency[word]
+        raw_ideas.set_value(index, 'stems', freq_trimmed)
     # stems = [stem for stem in stems if frequency[stem] > THRESHOLD]
 
-    return pd.DataFrame(idea_stems), frequency
+    return raw_ideas, all_frequency_trimmed
