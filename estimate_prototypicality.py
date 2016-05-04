@@ -11,7 +11,8 @@ import json
     
 if __name__ == "__main__":
 
-	test_ideas = pd.read_csv("data/fabric_120_creativity_scores.csv")
+	training_ideas = pd.read_csv("data/fabric_120_creativity_scores.csv")
+	test_ideas = pd.read_csv("data/fabric_display_all.csv")
 	# test_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
 	# test_ideas = pd.read_csv("data/fabric_display_120_rand.csv")
 	creativity_set = test_ideas["creativity"]
@@ -19,7 +20,7 @@ if __name__ == "__main__":
 	cumulative_correlation = pd.DataFrame([[0,0,0,0,0,0]], 
 		columns = ['frequency_threshold', 'num_buckets','creativity','prototypicality','correlation', 'p-value'])
 
-	for f_score in [5,10,25,50,100]:
+	for f_score in [1,2,3,4,5,10]:
 		for num_buckets in [5,10,25,50,100]:
 
 			# make the buckets
@@ -54,7 +55,7 @@ if __name__ == "__main__":
 			pr_ideas = pr.idea_prototypicality(this_test_ideas, baseline_cdf, this_buckets)
 			print pr_ideas.head(10)
 			corr = stats.pearsonr(pr_ideas['prototypicality'], pr_ideas['creativity'])
-			cumulative_correlation = cumulative_correlation.append(pd.DataFrame([[f_score, num_buckets, 0, 0, corr[0], corr[1]]], 
+			cumulative_correlation = cumulative_correlation.append(pd.DataFrame([[f_score, num_buckets, pr_ideas['creativity'], pr_ideas['prototypicality'], corr[0], corr[1]]], 
 				columns = ['frequency_threshold', 'num_buckets','creativity','prototypicality','correlation', 'p-value']))
 			# cumulative_correlation.append(pd.DataFrame())
 		    # print stem_network
